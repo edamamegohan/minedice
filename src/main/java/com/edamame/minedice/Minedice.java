@@ -25,11 +25,15 @@ public final class Minedice extends JavaPlugin {
         if (command.getName().equalsIgnoreCase("dice")) {
             if (sender instanceof Player) { //このコマンドがプレイヤーから実行されているか確認
                 Player player_sender = (Player) sender;         //CommandSender型のsenderをPlayer型に変換
-                String name = player_sender.getDisplayName();   //Player型になったので、getDisplayName()が使える
+                String name = player_sender.getDisplayName();   //Player型になったので、getDisplayName()が使える。
 
                 if (args.length == 1) {
                     try {
                         int maxnumber = Integer.parseInt(args[0]);
+                        if(maxnumber > 100000000){
+                            Bukkit.getServer().broadcastMessage("面の数は1~100000000にしてください");
+                            return false;
+                        }
                         if (maxnumber >= 1) {
                             int number = (int) Math.ceil(Math.random() * maxnumber);     //Math.random →0~1の小数を乱数　Math.random×面の数を切り上げでさいころ
                             Bukkit.getServer().broadcastMessage(name + " は " + maxnumber + " 面さいころを振り、" + number + " を出しました。");
@@ -47,6 +51,10 @@ public final class Minedice extends JavaPlugin {
                     try {
                         int sum = 0;
                         int maxnumber = Integer.parseInt(args[0]);
+                        if(maxnumber > 100000000){
+                            Bukkit.getServer().broadcastMessage("面の数は1~100000000にしてください");
+                            return false;
+                        }
                         int count = Integer.parseInt(args[1]);
                         if (1 <= count && count <= 10) {
                             for (int i = 1; i <= count; i++) {
