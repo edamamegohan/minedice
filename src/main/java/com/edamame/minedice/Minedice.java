@@ -25,7 +25,7 @@ public final class Minedice extends JavaPlugin {
         if (command.getName().equalsIgnoreCase("dice")) {
             if (sender instanceof Player) { //このコマンドがプレイヤーから実行されているか確認
                 Player player_sender = (Player) sender;         //CommandSender型のsenderをPlayer型に変換
-                String name = player_sender.getDisplayName();   //Player型になったので、getDisplayName()が使える
+                String name = player_sender.getDisplayName();   //Player型になったので、getDisplayName()が使える。
 
                 if (args.length == 1) {
                     try {
