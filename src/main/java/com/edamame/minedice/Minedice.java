@@ -92,7 +92,7 @@ public final class Minedice extends JavaPlugin {
                 for(int i = 0; i < 3; i++){
                     dices[i] = (int) Math.ceil(Math.random() * 6);  //dicesにさいころ3つを格納
                 }
-                Bukkit.getServer().broadcastMessage(name + " は、" + dices[0] + " , " + dices[1] + " , " + dices[2] + " を出しました")
+                Bukkit.getServer().broadcastMessage(name + " は、" + dices[0] + " , " + dices[1] + " , " + dices[2] + " を出しました");
             }
         }
         return false;
