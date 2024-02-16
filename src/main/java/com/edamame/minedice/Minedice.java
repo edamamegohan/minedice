@@ -86,10 +86,13 @@ public final class Minedice extends JavaPlugin {
                 return false;
             }
             if(args[0].equalsIgnoreCase("alone")){
+                Player player_sender = (Player) sender;
+                String name = player_sender.getDisplayName();
                 int[] dices = new int[3];
                 for(int i = 0; i < 3; i++){
                     dices[i] = (int) Math.ceil(Math.random() * 6);  //dicesにさいころ3つを格納
                 }
+                Bukkit.getServer().broadcastMessage(name + " は、" + dices[0] + " , " + dices[1] + " , " + dices[2] + " を出しました")
             }
         }
         return false;
