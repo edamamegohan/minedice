@@ -75,8 +75,19 @@ public final class Minedice extends JavaPlugin {
                     }
                 }
             } else {
-                Bukkit.getLogger().info("このコマンドはコンソールからは使用できません。");
+                Bukkit.getLogger().info("このコマンドはコンソールからは使用できません");
                 return false;
+            }
+        }
+
+        if(command.getName().equalsIgnoreCase("mch")){
+            if(!(sender instanceof Player)){
+                Bukkit.getLogger().info("このコマンドはコンソールからは使用できません");
+                return false;
+            }
+            if(args[0].equalsIgnoreCase("alone")){
+                int[] dices = new int[3];
+
             }
         }
         return false;

@@ -7,3 +7,7 @@ commands:
   mdice:
     description: さいころを振るコマンドです
     usage: /mdice [面の数] [振る個数(1は省略可)]　で入力してください
+
+  mch:
+    description: チンチロリンをするコマンドです
+    usage: /mch [alone/open/join]　で入力してください
