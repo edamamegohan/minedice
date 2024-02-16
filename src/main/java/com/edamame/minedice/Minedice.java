@@ -87,7 +87,9 @@ public final class Minedice extends JavaPlugin {
             }
             if(args[0].equalsIgnoreCase("alone")){
                 int[] dices = new int[3];
-
+                for(int i = 0; i < 3; i++){
+                    dices[i] = (int) Math.ceil(Math.random() * 6);  //dicesにさいころ3つを格納
+                }
             }
         }
         return false;
