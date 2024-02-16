@@ -4,6 +4,6 @@ main: com.edamame.minedice.Minedice
 api-version: '1.20'
 
 commands:
-  dice:
+  mdice:
     description: さいころを振るコマンドです
-    usage: /dice [面の数] [振る個数(1は省略可)]　で入力してください
+    usage: /mdice [面の数] [振る個数(1は省略可)]　で入力してください

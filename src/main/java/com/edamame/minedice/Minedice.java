@@ -22,7 +22,7 @@ public final class Minedice extends JavaPlugin {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (command.getName().equalsIgnoreCase("dice")) {
+        if (command.getName().equalsIgnoreCase("mdice")) {
             if (sender instanceof Player) { //このコマンドがプレイヤーから実行されているか確認
                 Player player_sender = (Player) sender;         //CommandSender型のsenderをPlayer型に変換
                 String name = player_sender.getDisplayName();   //Player型になったので、getDisplayName()が使える。
@@ -74,9 +74,9 @@ public final class Minedice extends JavaPlugin {
                         return false;
                     }
                 }
-                return false;
             } else {
                 Bukkit.getLogger().info("このコマンドはコンソールからは使用できません。");
+                return false;
             }
         }
         return false;
