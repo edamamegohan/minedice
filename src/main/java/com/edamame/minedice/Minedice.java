@@ -93,6 +93,16 @@ public final class Minedice extends JavaPlugin {
                     dices[i] = (int) Math.ceil(Math.random() * 6);  //dicesにさいころ3つを格納
                 }
                 Bukkit.getServer().broadcastMessage(name + " は、" + dices[0] + " , " + dices[1] + " , " + dices[2] + " を出しました");
+                if(dices[0] == dices[1] && dices[1] == dices[2]) {   //ゾロ目の処理
+                    if(dices[0] == 1){
+                        Bukkit.getServer().broadcastMessage("ピンゾロ！！！");
+                        return true;
+                    } else {
+                        Bukkit.getServer().broadcastMessage("ゾロ目！！");
+                    }
+                } else if (dices[0] != dices[1] && dices[1] != dices[2] && dices[2] != dices[0]) {  //すべて違うときの処理
+
+                }
             }
         }
         return false;
