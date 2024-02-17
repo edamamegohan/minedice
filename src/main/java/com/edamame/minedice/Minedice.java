@@ -111,7 +111,13 @@ public final class Minedice extends JavaPlugin {
                     return true;
                 }
                 else{   //目が2:1で出たとき
-
+                    if(dices[0] == dices[1]){
+                        Bukkit.getServer().broadcastMessage(dices[2] + " の目！");
+                    } else if (dices[1] == dices[2]) {
+                        Bukkit.getServer().broadcastMessage(dices[0] + " の目！");
+                    }else {
+                        Bukkit.getServer().broadcastMessage(dices[1] + " の目！");
+                    }
                 }
             }
         }
