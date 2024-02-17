@@ -80,7 +80,7 @@ public final class Minedice extends JavaPlugin {
             }
         }
 
-        if(command.getName().equalsIgnoreCase("mch")){
+        if(command.getName().equalsIgnoreCase("mcr")){
             if(!(sender instanceof Player)){
                 Bukkit.getLogger().info("このコマンドはコンソールからは使用できません");
                 return false;
@@ -89,24 +89,29 @@ public final class Minedice extends JavaPlugin {
                 Player player_sender = (Player) sender;
                 String name = player_sender.getDisplayName();
                 int[] dices = new int[3];
-                for(int i = 0; i < 3; i++){
-                    dices[i] = (int) Math.ceil(Math.random() * 6);  //dicesにさいころ3つを格納
-                }
+                for(int i = 0; i < 3; i++) dices[i] = (int) Math.ceil(Math.random() * 6);  //dicesにさいころ3つを格納
                 Bukkit.getServer().broadcastMessage(name + " は、" + dices[0] + " , " + dices[1] + " , " + dices[2] + " を出しました");
                 if(dices[0] == dices[1] && dices[1] == dices[2]) {   //ゾロ目の処理
                     if(dices[0] == 1){
                         Bukkit.getServer().broadcastMessage("ピンゾロ！！！");
-                        return true;
                     } else {
                         Bukkit.getServer().broadcastMessage("ゾロ目！！");
                     }
-                } else if (dices[0] != dices[1] && dices[1] != dices[2] && dices[2] != dices[0]) {  //すべて違うときの処理
+                    return true;
+                }
+                else if (dices[0] != dices[1] && dices[1] != dices[2] && dices[2] != dices[0]) {  //すべて違うときの処理
                     switch (dices[0]^2 + dices[1]^2 + dices[2]^2){
                         case 14:    //ヒフミの処理
                             Bukkit.getServer().broadcastMessage("ヒフミ...");
+                            break;
                         case 77:    //シゴロの処理
                             Bukkit.getServer().broadcastMessage("シゴロ！！");
+                            break;
                     }
+                    return true;
+                }
+                else{   //目が2:1で出たとき
+
                 }
             }
         }
