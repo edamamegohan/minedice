@@ -107,6 +107,8 @@ public final class Minedice extends JavaPlugin {
                         case 77:    //シゴロの処理
                             Bukkit.getServer().broadcastMessage("シゴロ！！");
                             break;
+                        default:    //役なしの処理
+                            Bukkit.getServer().broadcastMessage("役なし...");
                     }
                     return true;
                 }

@@ -4,6 +4,10 @@ main: com.edamame.minedice.Minedice
 api-version: '1.20'
 
 commands:
-  dice:
-    description: Command to roll a dice.
-    usage: /dice [面の数] [振る個数(1は省略可)]　で入力してください
+  mdice:
+    description: さいころを振るコマンドです
+    usage: /mdice [面の数] [振る個数(1は省略可)]　で入力してください
+
+  mcr:
+    description: チンチロリンをするコマンドです
+    usage: /mcr [alone/open/join]　で入力してください
