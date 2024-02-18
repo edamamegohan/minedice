@@ -109,6 +109,7 @@ public final class Minedice extends JavaPlugin {
                             break;
                         default:    //役なしの処理
                             Bukkit.getServer().broadcastMessage("役なし...");
+                            break;
                     }
                     return true;
                 }
@@ -120,6 +121,7 @@ public final class Minedice extends JavaPlugin {
                     }else {
                         Bukkit.getServer().broadcastMessage(dices[1] + " の目！");
                     }
+                    return true;
                 }
             }
         }
