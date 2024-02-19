@@ -100,6 +100,11 @@ public final class Minedice extends JavaPlugin {
                     return true;
                 }
                 else if (dices[0] != dices[1] && dices[1] != dices[2] && dices[2] != dices[0]) {  //すべて違うときの処理
+                    if(dices[0] + dices[1] + dices[2] == 14){
+                        //0014(大石)の処理
+                        Bukkit.getServer().broadcastMessage("大石！！");
+                        return true;
+                    }
                     switch (dices[0]^2 + dices[1]^2 + dices[2]^2){
                         case 14:    //ヒフミの処理
                             Bukkit.getServer().broadcastMessage("ヒフミ...");
