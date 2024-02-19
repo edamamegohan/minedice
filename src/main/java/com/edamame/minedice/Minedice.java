@@ -88,48 +88,71 @@ public final class Minedice extends JavaPlugin {
             if(args[0].equalsIgnoreCase("alone")){
                 Player player_sender = (Player) sender;
                 String name = player_sender.getDisplayName();
-                int[] dices = new int[3];
-                for(int i = 0; i < 3; i++) dices[i] = (int) Math.ceil(Math.random() * 6);  //dicesにさいころ3つを格納
-                Bukkit.getServer().broadcastMessage(name + " は、" + dices[0] + " , " + dices[1] + " , " + dices[2] + " を出しました");
-                if(dices[0] == dices[1] && dices[1] == dices[2]) {   //ゾロ目の処理
-                    if(dices[0] == 1){
-                        Bukkit.getServer().broadcastMessage("ピンゾロ！！！");
-                    } else {
-                        Bukkit.getServer().broadcastMessage("ゾロ目！！");
-                    }
-                    return true;
-                }
-                else if (dices[0] != dices[1] && dices[1] != dices[2] && dices[2] != dices[0]) {  //すべて違うときの処理
-                    if(dices[0] + dices[1] + dices[2] == 14){
-                        //0014(大石)の処理
-                        Bukkit.getServer().broadcastMessage("大石！！");
-                        return true;
-                    }
-                    switch (dices[0]^2 + dices[1]^2 + dices[2]^2){
-                        case 14:    //ヒフミの処理
-                            Bukkit.getServer().broadcastMessage("ヒフミ...");
-                            break;
-                        case 77:    //シゴロの処理
-                            Bukkit.getServer().broadcastMessage("シゴロ！！");
-                            break;
-                        default:    //役なしの処理
-                            Bukkit.getServer().broadcastMessage("役なし...");
-                            break;
-                    }
-                    return true;
-                }
-                else{   //目が2:1で出たとき
-                    if(dices[0] == dices[1]){
-                        Bukkit.getServer().broadcastMessage(dices[2] + " の目！");
-                    } else if (dices[1] == dices[2]) {
-                        Bukkit.getServer().broadcastMessage(dices[0] + " の目！");
-                    }else {
-                        Bukkit.getServer().broadcastMessage(dices[1] + " の目！");
-                    }
-                    return true;
-                }
+                int point = chinchiro(name);
+                Bukkit.getServer().broadcastMessage("デバッグ用　" + point + "pts");
+                return true;
             }
         }
         return false;
+    }
+
+    public int chinchiro(String name){
+        int[] dices = new int[3];
+        for(int i = 0; i < 3; i++) dices[i] = (int) Math.ceil(Math.random() * 6);  //dicesにさいころ3つを格納
+        Bukkit.getServer().broadcastMessage(name + " は、" + dices[0] + " , " + dices[1] + " , " + dices[2] + " を出しました");
+        if(dices[0] == dices[1] && dices[1] == dices[2]) {   //ゾロ目の処理
+            if(dices[0] == 1){
+                Bukkit.getServer().broadcastMessage("ピンゾロ！！！");
+                return 11;
+            } else {
+                Bukkit.getServer().broadcastMessage("ゾロ目！！");
+                return 10;
+            }
+        }
+        else if (dices[0] != dices[1] && dices[1] != dices[2] && dices[2] != dices[0]) {  //すべて違うときの処理
+            int squared = dices[0]*dices[0] + dices[1]*dices[1] + dices[2]*dices[2];
+            Bukkit.getServer().broadcastMessage("2乗の合計は"+squared);
+            if(dices[0] + dices[1] + dices[2] == 14){
+                //0014(大石)の処理
+                Bukkit.getServer().broadcastMessage("大石！！");
+                return 9;
+            } else if (squared == 14) {
+                //ヒフミの処理
+                Bukkit.getServer().broadcastMessage("ヒフミ...");
+                return -2;
+            } else if (squared == 77) {
+                //シゴロの処理
+                Bukkit.getServer().broadcastMessage("シゴロ！！");
+                return 8;
+            } else {
+                //役なしの処理
+                Bukkit.getServer().broadcastMessage("役なし...");
+                return 0;
+            }
+            /*
+            if(dices[0]^2 + dices[1]^2 + dices[2]^2){
+                case 14:    //ヒフミの処理
+                    Bukkit.getServer().broadcastMessage("ヒフミ...");
+                    return -2;
+                case 77:    //シゴロの処理
+                    Bukkit.getServer().broadcastMessage("シゴロ！！");
+                    return 8;
+                default:    //役なしの処理
+                    Bukkit.getServer().broadcastMessage("役なし...");
+                    return 0;
+            } */
+        }
+        else{   //目が2:1で出たとき
+            if(dices[0] == dices[1]){
+                Bukkit.getServer().broadcastMessage(dices[2] + " の目！");
+                return dices[2];
+            } else if (dices[1] == dices[2]) {
+                Bukkit.getServer().broadcastMessage(dices[0] + " の目！");
+                return dices[0];
+            }else {
+                Bukkit.getServer().broadcastMessage(dices[1] + " の目！");
+                return dices[1];
+            }
+        }
     }
 }
