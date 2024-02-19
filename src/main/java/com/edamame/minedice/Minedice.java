@@ -89,7 +89,6 @@ public final class Minedice extends JavaPlugin {
                 Player player_sender = (Player) sender;
                 String name = player_sender.getDisplayName();
                 int point = chinchiro(name);
-                Bukkit.getServer().broadcastMessage("デバッグ用　" + point + "pts");
                 return true;
             }
         }
@@ -100,6 +99,11 @@ public final class Minedice extends JavaPlugin {
         int[] dices = new int[3];
         for(int i = 0; i < 3; i++) dices[i] = (int) Math.ceil(Math.random() * 6);  //dicesにさいころ3つを格納
         Bukkit.getServer().broadcastMessage(name + " は、" + dices[0] + " , " + dices[1] + " , " + dices[2] + " を出しました");
+        if(Math.random() < 0.005){
+            //ションベンの処理。if文の中で確率を変更
+            Bukkit.getServer().broadcastMessage("おっと！ションベン...！");
+            return -1;
+        }
         if(dices[0] == dices[1] && dices[1] == dices[2]) {   //ゾロ目の処理
             if(dices[0] == 1){
                 Bukkit.getServer().broadcastMessage("ピンゾロ！！！");
@@ -111,7 +115,6 @@ public final class Minedice extends JavaPlugin {
         }
         else if (dices[0] != dices[1] && dices[1] != dices[2] && dices[2] != dices[0]) {  //すべて違うときの処理
             int squared = dices[0]*dices[0] + dices[1]*dices[1] + dices[2]*dices[2];
-            Bukkit.getServer().broadcastMessage("2乗の合計は"+squared);
             if(dices[0] + dices[1] + dices[2] == 14){
                 //0014(大石)の処理
                 Bukkit.getServer().broadcastMessage("大石！！");
