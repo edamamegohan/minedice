@@ -132,18 +132,6 @@ public final class Minedice extends JavaPlugin {
                 Bukkit.getServer().broadcastMessage("役なし...");
                 return 0;
             }
-            /*
-            if(dices[0]^2 + dices[1]^2 + dices[2]^2){
-                case 14:    //ヒフミの処理
-                    Bukkit.getServer().broadcastMessage("ヒフミ...");
-                    return -2;
-                case 77:    //シゴロの処理
-                    Bukkit.getServer().broadcastMessage("シゴロ！！");
-                    return 8;
-                default:    //役なしの処理
-                    Bukkit.getServer().broadcastMessage("役なし...");
-                    return 0;
-            } */
         }
         else{   //目が2:1で出たとき
             if(dices[0] == dices[1]){
