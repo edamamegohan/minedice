@@ -86,15 +86,29 @@ public final class Minedice extends JavaPlugin {
                 return false;
             }
 
+            Player player_sender = (Player) sender;
+            String name = player_sender.getDisplayName();
+
             if(args[0].equalsIgnoreCase("alone")){
-                Player player_sender = (Player) sender;
-                String name = player_sender.getDisplayName();
                 chinchiro(name);
                 return true;
             }
 
             if(args[0].equalsIgnoreCase("open")){
-
+                Bukkit.getServer().broadcastMessage(name+" がチンチロリンを募集しています！/mcr joinで参加しよう！");
+                Bukkit.getServer().broadcastMessage("残り募集時間 60秒");
+                Bukkit.getScheduler().runTaskLater(this, () -> {
+                    Bukkit.getServer().broadcastMessage(name+" がチンチロリンを募集しています！/mcr joinで参加しよう！");
+                    Bukkit.getServer().broadcastMessage("残り募集時間 40秒");
+                }, 400L);
+                Bukkit.getScheduler().runTaskLater(this, () -> {
+                    Bukkit.getServer().broadcastMessage(name+" がチンチロリンを募集しています！/mcr joinで参加しよう！");
+                    Bukkit.getServer().broadcastMessage("残り募集時間 20秒");
+                }, 400L);
+                Bukkit.getScheduler().runTaskLater(this, () -> {
+                    Bukkit.getServer().broadcastMessage(name +" のチンチロリンの募集は終了しました");
+                }, 400L);
+                return true;
             }
 
             if(args[0].equalsIgnoreCase("join")){
