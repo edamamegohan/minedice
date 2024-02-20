@@ -97,7 +97,7 @@ public final class Minedice extends JavaPlugin {
 
             }
 
-            if(args[0].equalsIgnoreCase("open")){
+            if(args[0].equalsIgnoreCase("join")){
 
             }
         }
