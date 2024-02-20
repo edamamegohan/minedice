@@ -85,11 +85,20 @@ public final class Minedice extends JavaPlugin {
                 Bukkit.getLogger().info("このコマンドはコンソールからは使用できません");
                 return false;
             }
+
             if(args[0].equalsIgnoreCase("alone")){
                 Player player_sender = (Player) sender;
                 String name = player_sender.getDisplayName();
-                int point = chinchiro(name);
+                chinchiro(name);
                 return true;
+            }
+
+            if(args[0].equalsIgnoreCase("open")){
+
+            }
+
+            if(args[0].equalsIgnoreCase("open")){
+
             }
         }
         return false;
