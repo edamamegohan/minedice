@@ -23,6 +23,7 @@ public final class Minedice extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equalsIgnoreCase("mdice")) {
+
             if (sender instanceof Player) { //このコマンドがプレイヤーから実行されているか確認
                 Player player_sender = (Player) sender;         //CommandSender型のsenderをPlayer型に変換
                 String name = player_sender.getDisplayName();   //Player型になったので、getDisplayName()が使える。
@@ -86,6 +87,7 @@ public final class Minedice extends JavaPlugin {
                 return false;
             }
 
+            boolean matched = false;
             Player player_sender = (Player) sender;
             String name = player_sender.getDisplayName();
 
@@ -100,13 +102,13 @@ public final class Minedice extends JavaPlugin {
                 Bukkit.getScheduler().runTaskLater(this, () -> {
                     Bukkit.getServer().broadcastMessage(name+" がチンチロリンを募集しています！/mcr joinで参加しよう！");
                     Bukkit.getServer().broadcastMessage("残り募集時間 40秒");
-                }, 400L);
-                Bukkit.getScheduler().runTaskLater(this, () -> {
-                    Bukkit.getServer().broadcastMessage(name+" がチンチロリンを募集しています！/mcr joinで参加しよう！");
-                    Bukkit.getServer().broadcastMessage("残り募集時間 20秒");
-                }, 400L);
-                Bukkit.getScheduler().runTaskLater(this, () -> {
-                    Bukkit.getServer().broadcastMessage(name +" のチンチロリンの募集は終了しました");
+                    Bukkit.getScheduler().runTaskLater(this, () -> {
+                        Bukkit.getServer().broadcastMessage(name+" がチンチロリンを募集しています！/mcr joinで参加しよう！");
+                        Bukkit.getServer().broadcastMessage("残り募集時間 20秒");
+                        Bukkit.getScheduler().runTaskLater(this, () -> {
+                            Bukkit.getServer().broadcastMessage(name +" のチンチロリンの募集は終了しました");
+                        }, 400L);
+                    }, 400L);
                 }, 400L);
                 return true;
             }
