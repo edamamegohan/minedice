@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 public final class Minedice extends JavaPlugin {
 
@@ -20,6 +21,8 @@ public final class Minedice extends JavaPlugin {
         // Plugin shutdown logic
         Bukkit.getLogger().info("minediceは無効になりました");
     }
+
+    private BukkitTask timerTask = null;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -102,6 +105,9 @@ public final class Minedice extends JavaPlugin {
             }
 
             if(args[0].equalsIgnoreCase("join")){
+                if(timerTask != null){
+                    timerTask.cancel();
+                }
                 Bukkit.getServer().broadcastMessage("joined");
                 return true;
             }
@@ -163,7 +169,7 @@ public final class Minedice extends JavaPlugin {
 
     public void CountDownTimer(String name){
 
-        new BukkitRunnable(){
+        timerTask = new BukkitRunnable(){
             int time = 80;
             @Override
             public void run() {
