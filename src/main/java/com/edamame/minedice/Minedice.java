@@ -5,6 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public final class Minedice extends JavaPlugin {
 
@@ -87,7 +88,6 @@ public final class Minedice extends JavaPlugin {
                 return false;
             }
 
-            boolean matched = false;
             Player player_sender = (Player) sender;
             String name = player_sender.getDisplayName();
 
@@ -97,24 +97,13 @@ public final class Minedice extends JavaPlugin {
             }
 
             if(args[0].equalsIgnoreCase("open")){
-                Bukkit.getServer().broadcastMessage(name+" がチンチロリンを募集しています！/mcr joinで参加しよう！");
-                Bukkit.getServer().broadcastMessage("残り募集時間 60秒");
-                Bukkit.getScheduler().runTaskLater(this, () -> {
-                    Bukkit.getServer().broadcastMessage(name+" がチンチロリンを募集しています！/mcr joinで参加しよう！");
-                    Bukkit.getServer().broadcastMessage("残り募集時間 40秒");
-                    Bukkit.getScheduler().runTaskLater(this, () -> {
-                        Bukkit.getServer().broadcastMessage(name+" がチンチロリンを募集しています！/mcr joinで参加しよう！");
-                        Bukkit.getServer().broadcastMessage("残り募集時間 20秒");
-                        Bukkit.getScheduler().runTaskLater(this, () -> {
-                            Bukkit.getServer().broadcastMessage(name +" のチンチロリンの募集は終了しました");
-                        }, 400L);
-                    }, 400L);
-                }, 400L);
+                CountDownTimer(name);
                 return true;
             }
 
             if(args[0].equalsIgnoreCase("join")){
-
+                Bukkit.getServer().broadcastMessage("joined");
+                return true;
             }
         }
         return false;
@@ -170,5 +159,22 @@ public final class Minedice extends JavaPlugin {
                 return dices[1];
             }
         }
+    }
+
+    public void CountDownTimer(String name){
+
+        new BukkitRunnable(){
+            int time = 80;
+            @Override
+            public void run() {
+                time -= 20;
+                if(time <= 0){
+                    Bukkit.getServer().broadcastMessage(name+"のチンチロリンの募集は終了しました。");
+                    this.cancel();
+                }
+                Bukkit.getServer().broadcastMessage(name+" がチンチロリンを募集しています！/mcr joinで参加しよう！");
+                Bukkit.getServer().broadcastMessage("残り募集時間 "+time+" 秒");
+            }
+        }.runTaskTimer(this, 0, 20*20L);
     }
 }
