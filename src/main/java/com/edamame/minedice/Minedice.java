@@ -113,7 +113,7 @@ public final class Minedice extends JavaPlugin {
             }
 
             if(args[0].equalsIgnoreCase("join")){
-                if(parent == name){
+                if(parent.equals(name)){
                     Bukkit.getServer().broadcastMessage("すでに親として参加しています");
                     return true;
                 }
