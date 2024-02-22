@@ -102,15 +102,29 @@ public final class Minedice extends JavaPlugin {
             }
 
             if(args[0].equalsIgnoreCase("open")){
+                if(parent != null){
+                    Bukkit.getServer().broadcastMessage("すでに開催されているゲームがあります");
+                    Bukkit.getServer().broadcastMessage("/mcr joinで参加しよう！");
+                    return true;
+                }
                 parent = name;
                 CountDownTimer(name);
                 return true;
             }
 
             if(args[0].equalsIgnoreCase("join")){
-                if(timerTask != null){
-                    timerTask.cancel();
+                if(parent == name){
+                    Bukkit.getServer().broadcastMessage("すでに親として参加しています");
+                    return true;
                 }
+
+                if(parent == null){
+                    Bukkit.getServer().broadcastMessage("開催されているチンチロリンのゲームはありません");
+                    return true;
+                }
+
+                if(timerTask != null)timerTask.cancel();
+
                 Bukkit.getServer().broadcastMessage("joined");
                 child = name;
 
