@@ -24,6 +24,9 @@ public final class Minedice extends JavaPlugin {
 
     private BukkitTask timerTask = null;
 
+    String parent;
+    String child;
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equalsIgnoreCase("mdice")) {
@@ -100,6 +103,7 @@ public final class Minedice extends JavaPlugin {
             }
 
             if(args[0].equalsIgnoreCase("open")){
+                parent = name;
                 CountDownTimer(name);
                 return true;
             }
@@ -109,6 +113,11 @@ public final class Minedice extends JavaPlugin {
                     timerTask.cancel();
                 }
                 Bukkit.getServer().broadcastMessage("joined");
+                child = name;
+
+                int pointParent = chinchiro(parent);
+                int pointChild = chinchiro(child);
+
                 return true;
             }
         }
@@ -176,6 +185,7 @@ public final class Minedice extends JavaPlugin {
                 time -= 20;
                 if(time <= 0){
                     Bukkit.getServer().broadcastMessage(name+"のチンチロリンの募集は終了しました。");
+                    parent = null;
                     this.cancel();
                 }
                 Bukkit.getServer().broadcastMessage(name+" がチンチロリンを募集しています！/mcr joinで参加しよう！");
