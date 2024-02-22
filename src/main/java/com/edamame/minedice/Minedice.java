@@ -23,7 +23,6 @@ public final class Minedice extends JavaPlugin {
     }
 
     private BukkitTask timerTask = null;
-
     String parent;
     String child;
 
@@ -118,6 +117,13 @@ public final class Minedice extends JavaPlugin {
                 int pointParent = chinchiro(parent);
                 int pointChild = chinchiro(child);
 
+                if(pointChild < pointParent){
+                    Bukkit.getServer().broadcastMessage("親の勝ち！");
+                } else if (pointChild > pointParent){
+                    Bukkit.getServer().broadcastMessage("子の勝ち！");
+                } else {
+                    Bukkit.getServer().broadcastMessage("引き分け");
+                }
                 return true;
             }
         }
