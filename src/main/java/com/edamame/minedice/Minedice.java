@@ -151,8 +151,21 @@ public final class Minedice extends JavaPlugin {
                 Bukkit.getServer().broadcastMessage("joined");
                 child = name;
 
-                int pointParent = chinchiro(parent);
-                int pointChild = chinchiro(child);
+                //親の役を決定
+                int i = 0;
+                int pointParent;
+                do{
+                    i++;
+                    pointParent = chinchiro(parent);
+                }while (i == 3 || pointParent != 0);
+
+                //子の役を決定
+                i = 0;
+                int pointChild;
+                do{
+                    i++;
+                    pointChild = chinchiro(child);
+                }while (i == 3 || pointChild != 0);
 
                 Player playerParent = Bukkit.getPlayer(parent);
                 Player playerChild = Bukkit.getPlayer(child);
