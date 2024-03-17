@@ -42,20 +42,29 @@ public final class Minedice extends JavaPlugin {
                     try {
                         int maxnumber = Integer.parseInt(args[0]);
                         if(maxnumber > 100000000){
-                            Bukkit.getServer().broadcastMessage("面の数は1~100000000にしてください");
+                            player_sender.sendMessage(ChatColor.RED + "[MineDice error] " +
+                                    ChatColor.WHITE + ChatColor.BOLD +"面の数は1~100000000にしてください");
                             return false;
                         }
                         if (maxnumber >= 1) {
                             int number = (int) Math.ceil(Math.random() * maxnumber);     //Math.random →0~1の小数を乱数　Math.random×面の数を切り上げでさいころ
-                            Bukkit.getServer().broadcastMessage(name + " は " + maxnumber + " 面さいころを振り、" + number + " を出しました。");
+                            Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[MineDice]" +
+                                    ChatColor.YELLOW + ChatColor.BOLD + name +
+                                    ChatColor.WHITE + ChatColor.BOLD + " は " +
+                                    ChatColor.YELLOW + ChatColor.BOLD + maxnumber +
+                                    ChatColor.WHITE + ChatColor.BOLD + " 面さいころを振り、" +
+                                    ChatColor.YELLOW + ChatColor.BOLD + number +
+                                    ChatColor.WHITE + ChatColor.BOLD + " を出しました。");
 
                             return true;
                         } else {
-                            Bukkit.getServer().broadcastMessage("面の数は1以上の整数にしてください");
+                            player_sender.sendMessage(ChatColor.RED + "[MineDice error] " +
+                                    ChatColor.WHITE + ChatColor.BOLD + "面の数は1以上の整数にしてください");
                             return false;
                         }
                     } catch (NumberFormatException e) {
-                        Bukkit.getServer().broadcastMessage("面の数は1以上の整数にしてください");
+                        player_sender.sendMessage(ChatColor.RED + "[MineDice error] " +
+                                ChatColor.WHITE + ChatColor.BOLD + "面の数は1以上の整数にしてください");
                         return false;
                     }
                 } else if (args.length == 2) {
@@ -63,25 +72,46 @@ public final class Minedice extends JavaPlugin {
                         int sum = 0;
                         int maxnumber = Integer.parseInt(args[0]);
                         if(maxnumber > 100000000){
-                            Bukkit.getServer().broadcastMessage("面の数は1~100000000にしてください");
+                            player_sender.sendMessage(ChatColor.RED + "[MineDice error] " +
+                                    ChatColor.WHITE + ChatColor.BOLD + "面の数は1~100000000にしてください");
                             return false;
                         }
                         int count = Integer.parseInt(args[1]);
                         if (1 <= count && count <= 10) {
                             for (int i = 1; i <= count; i++) {
                                 int number = (int) Math.ceil(Math.random() * maxnumber);     //Math.random →0~1の小数を乱数　Math.random×面の数を切り上げでさいころ
-                                Bukkit.getServer().broadcastMessage(i + " 回目 " + name + " は " + maxnumber + " 面さいころを振り、" + number + " を出しました。");
+                                Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[MineDice]" +
+                                        ChatColor.YELLOW + ChatColor.BOLD + i +
+                                        ChatColor.WHITE + ChatColor.BOLD + "回目 " +
+                                        ChatColor.YELLOW + ChatColor.BOLD + name +
+                                        ChatColor.WHITE + ChatColor.BOLD + " は " +
+                                        ChatColor.YELLOW + ChatColor.BOLD + maxnumber +
+                                        ChatColor.WHITE + ChatColor.BOLD + " 面さいころを振り、" +
+                                        ChatColor.YELLOW + ChatColor.BOLD + number +
+                                        ChatColor.WHITE + ChatColor.BOLD + " を出しました。");
                                 sum += number;
                             }
-                            Bukkit.getServer().broadcastMessage(name + " は " + maxnumber + " 面さいころを " + count + " 回振り、出目の合計は" + sum + " でした。");
+                            //Bukkit.getServer().broadcastMessage(name + " は " + maxnumber + " 面さいころを " + count + " 回振り、出目の合計は" + sum + " でした。");
+                            Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[MineDice]" +
+                                    ChatColor.YELLOW + ChatColor.BOLD + name +
+                                    ChatColor.WHITE + ChatColor.BOLD + " は " +
+                                    ChatColor.YELLOW + ChatColor.BOLD + maxnumber +
+                                    ChatColor.WHITE + ChatColor.BOLD + " 面さいころを、" +
+                                    ChatColor.YELLOW + ChatColor.BOLD + count +
+                                    ChatColor.WHITE + ChatColor.BOLD + " 回振り、出目の合計は " +
+                                    ChatColor.YELLOW + ChatColor.BOLD + sum +
+                                    ChatColor.WHITE + ChatColor.BOLD + " でした。");
                             return true;
                         } else {
-                            Bukkit.getServer().broadcastMessage("振る個数は1以上10以下の整数にしてください");
+                            player_sender.sendMessage(ChatColor.RED + "[MineDice error] " +
+                                    ChatColor.WHITE + ChatColor.BOLD + "振る個数は1以上10以下の整数にしてください");
                             return false;
                         }
                     } catch (NumberFormatException e) {
-                        Bukkit.getServer().broadcastMessage("面の数は1以上の整数にしてください");
-                        Bukkit.getServer().broadcastMessage("振る個数は1以上10以下の整数にしてください");
+                        player_sender.sendMessage(ChatColor.RED + "[MineDice error] " +
+                                ChatColor.WHITE + ChatColor.BOLD + "面の数は1以上の整数にしてください");
+                        player_sender.sendMessage(ChatColor.RED + "[MineDice error] " +
+                                ChatColor.WHITE + ChatColor.BOLD + "振る個数は1以上10以下の整数にしてください");
                         return false;
                     }
                 }
@@ -101,14 +131,20 @@ public final class Minedice extends JavaPlugin {
             String name = player_sender.getDisplayName();
 
             if(args[0].equalsIgnoreCase("alone")){
-                chinchiro(name);
+                int i = 0, point = 0;
+                do {
+                    i++;
+                    point = chinchiro(name);
+                }while (i == 3 || point != 0);
                 return true;
             }
 
             if(args[0].equalsIgnoreCase("open")){
                 if(parent != null){
-                    Bukkit.getServer().broadcastMessage("すでに開催されているゲームがあります");
-                    Bukkit.getServer().broadcastMessage("/mcr joinで参加しよう！");
+                    Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[MineDice]" +
+                            ChatColor.WHITE + ChatColor.BOLD + "すでに開催されているゲームがあります");
+                    Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[MineDice]" +
+                            ChatColor.WHITE + ChatColor.BOLD + "/mcr joinで参加しよう！");
                     return true;
                 }
                 parent = name;
