@@ -11,11 +11,10 @@ public class Database {
     private Connection connection;
     private Statement statement;
 
-    public void ConnectionTable(){
+    public Database(){
         try{
             Class.forName("org.sqlite.JDBC");
             this.connection = DriverManager.getConnection("jdbc:sqlite:" + this.DBname);
-            this.statement = connection.createStatement();
 
             Bukkit.getLogger().info("ーーーーMineDiceーーーー");
             Bukkit.getLogger().info("データベースに接続しました");
@@ -32,7 +31,7 @@ public class Database {
            String uuid = player.getUniqueId().toString();
 
            this.statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("select money from moneydata where uuid = '" + uuid + "'");
+           ResultSet resultSet = statement.executeQuery("select money from moneydata where uuid = '" + uuid + "'");
 
             int money = resultSet.getInt("money");
             money = money + add_money;
@@ -40,6 +39,7 @@ public class Database {
             this.statement.executeUpdate("update moneydata set money = " + money + " where uuid = '" + uuid + "'");
 
             resultSet.close();
+            statement.close();
         }
         catch (SQLException e){
             Bukkit.getLogger().warning("ーーーーMineDiceーーーー");
@@ -58,6 +58,7 @@ public class Database {
             int money = resultSet.getInt("money");
 
             resultSet.close();
+            statement.close();
             return money;
         }
         catch (SQLException e){

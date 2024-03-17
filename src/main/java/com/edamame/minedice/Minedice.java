@@ -16,7 +16,6 @@ public final class Minedice extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         Bukkit.getLogger().info("minediceが起動しました");
-        database.ConnectionTable();
     }
 
     @Override
@@ -28,6 +27,8 @@ public final class Minedice extends JavaPlugin {
     private BukkitTask timerTask = null;
     String parent;
     String child;
+
+    int betMoney = -1;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -91,8 +92,6 @@ public final class Minedice extends JavaPlugin {
         }
 
         if(command.getName().equalsIgnoreCase("mcr")){
-            int betMoney = -1;
-
             if(!(sender instanceof Player)){
                 Bukkit.getLogger().info("このコマンドはコンソールからは使用できません");
                 return false;
@@ -116,8 +115,9 @@ public final class Minedice extends JavaPlugin {
 
                 if(database.CheckMoney(player_sender) < Integer.parseInt(args[1])){
                     player_sender.sendMessage(ChatColor.RED + "[MineDice error] " +
-                            ChatColor.WHITE + ChatColor.BOLD + "Betする金額は自分の所持金以下でないといけません");
-                    Bukkit.getLogger().warning("Bet金額エラー");
+                            ChatColor.WHITE + ChatColor.BOLD + "所持金が足りません");
+                    player_sender.sendMessage(ChatColor.RED + "[MineDice error] " +
+                            ChatColor.WHITE + ChatColor.BOLD + "開始するには、Bet金額の5倍の所持金が必要です");
                     return false;
                 }
                 betMoney = Integer.parseInt(args[1]);
@@ -139,9 +139,11 @@ public final class Minedice extends JavaPlugin {
 
                 if(timerTask != null)timerTask.cancel();
 
-                if(database.CheckMoney(player_sender) < betMoney){
+                if(database.CheckMoney(player_sender) < 5 * betMoney){
                     player_sender.sendMessage(ChatColor.RED + "[MineDice error] " +
                             ChatColor.WHITE + ChatColor.BOLD + "所持金が足りません");
+                    player_sender.sendMessage(ChatColor.RED + "[MineDice error] " +
+                            ChatColor.WHITE + ChatColor.BOLD + "参加するには、Bet金額の5倍の所持金が必要です");
                 }
 
                 database.AddMoney(player_sender, -1*betMoney);
@@ -163,27 +165,32 @@ public final class Minedice extends JavaPlugin {
                             database.AddMoney(playerParent, 3 * betMoney);
                             database.AddMoney(playerChild, -1 * betMoney);
                             Bukkit.getServer().broadcastMessage("子の2倍負け！");
+                            return true;
                         }
                         switch (pointParent) {
                             case 11:
                                 database.AddMoney(playerParent, 6 * betMoney);
                                 database.AddMoney(playerChild, -4 * betMoney);
                                 Bukkit.getServer().broadcastMessage("親の5倍勝ち！");
+                                break;
 
                             case 10:
                                 database.AddMoney(playerParent, 4 * betMoney);
                                 database.AddMoney(playerChild, -2 * betMoney);
                                 Bukkit.getServer().broadcastMessage("親の3倍勝ち！");
+                                break;
 
                             case 8:
                             case 9:
                                 database.AddMoney(playerParent, 3 * betMoney);
                                 database.AddMoney(playerChild, -1 * betMoney);
                                 Bukkit.getServer().broadcastMessage("親の2倍勝ち！");
+                                break;
 
                             default:
                                 database.AddMoney(playerParent, 2 * betMoney);
                                 Bukkit.getServer().broadcastMessage("親の1倍勝ち！");
+                                break;
                         }
                     }
                     else if (pointChild > pointParent) {
@@ -191,27 +198,32 @@ public final class Minedice extends JavaPlugin {
                             database.AddMoney(playerParent, -1 * betMoney);
                             database.AddMoney(playerChild, 3 * betMoney);
                             Bukkit.getServer().broadcastMessage("親の2倍負け！");
+                            return true;
                         }
                         switch (pointChild) {
                             case 11:
                                 database.AddMoney(playerParent, -4 * betMoney);
                                 database.AddMoney(playerChild, 6 * betMoney);
                                 Bukkit.getServer().broadcastMessage("子の5倍勝ち！");
+                                break;
 
                             case 10:
                                 database.AddMoney(playerParent, -2 * betMoney);
                                 database.AddMoney(playerChild, 4 * betMoney);
                                 Bukkit.getServer().broadcastMessage("子の3倍勝ち！");
+                                break;
 
                             case 8:
                             case 9:
                                 database.AddMoney(playerParent, -1 * betMoney);
                                 database.AddMoney(playerChild, 3 * betMoney);
                                 Bukkit.getServer().broadcastMessage("子の2倍勝ち！");
+                                break;
 
                             default:
                                 database.AddMoney(playerChild, 2 * betMoney);
                                 Bukkit.getServer().broadcastMessage("子の1倍勝ち！");
+                                break;
                         }
                     }
                     else {
@@ -219,6 +231,7 @@ public final class Minedice extends JavaPlugin {
                         database.AddMoney(playerParent, betMoney);
                         database.AddMoney(playerChild, betMoney);
                     }
+                    parent = null;
                     return true;
                 }
             }
@@ -293,8 +306,9 @@ public final class Minedice extends JavaPlugin {
 
                     parent = null;
                     this.cancel();
+                    return;
                 }
-                Bukkit.getServer().broadcastMessage(name+" がチンチロリンを募集しています！/mcr joinで参加しよう！");
+                Bukkit.getServer().broadcastMessage(name+" が" + money + "円のチンチロリンを募集しています！/mcr joinで参加しよう！");
                 Bukkit.getServer().broadcastMessage("残り募集時間 "+time+" 秒");
             }
         }.runTaskTimer(this, 0, 20*20L);
