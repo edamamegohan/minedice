@@ -1,6 +1,7 @@
 package com.edamame.minedice;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -9,11 +10,13 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 public final class Minedice extends JavaPlugin {
+    Database database = new Database();
 
     @Override
     public void onEnable() {
         // Plugin startup logic
         Bukkit.getLogger().info("minediceが起動しました");
+        database.ConnectionTable();
     }
 
     @Override
@@ -88,6 +91,8 @@ public final class Minedice extends JavaPlugin {
         }
 
         if(command.getName().equalsIgnoreCase("mcr")){
+            int betMoney = -1;
+
             if(!(sender instanceof Player)){
                 Bukkit.getLogger().info("このコマンドはコンソールからは使用できません");
                 return false;
@@ -108,7 +113,16 @@ public final class Minedice extends JavaPlugin {
                     return true;
                 }
                 parent = name;
-                CountDownTimer(name);
+
+                if(database.CheckMoney(player_sender) < Integer.parseInt(args[1])){
+                    player_sender.sendMessage(ChatColor.RED + "[MineDice error] " +
+                            ChatColor.WHITE + ChatColor.BOLD + "Betする金額は自分の所持金以下でないといけません");
+                    Bukkit.getLogger().warning("Bet金額エラー");
+                    return false;
+                }
+                betMoney = Integer.parseInt(args[1]);
+                database.AddMoney(player_sender, -1*betMoney);
+                CountDownTimer(player_sender, betMoney);
                 return true;
             }
 
@@ -125,20 +139,88 @@ public final class Minedice extends JavaPlugin {
 
                 if(timerTask != null)timerTask.cancel();
 
+                if(database.CheckMoney(player_sender) < betMoney){
+                    player_sender.sendMessage(ChatColor.RED + "[MineDice error] " +
+                            ChatColor.WHITE + ChatColor.BOLD + "所持金が足りません");
+                }
+
+                database.AddMoney(player_sender, -1*betMoney);
+
                 Bukkit.getServer().broadcastMessage("joined");
                 child = name;
 
                 int pointParent = chinchiro(parent);
                 int pointChild = chinchiro(child);
 
-                if(pointChild < pointParent){
-                    Bukkit.getServer().broadcastMessage("親の勝ち！");
-                } else if (pointChild > pointParent){
-                    Bukkit.getServer().broadcastMessage("子の勝ち！");
-                } else {
-                    Bukkit.getServer().broadcastMessage("引き分け");
+                Player playerParent = Bukkit.getPlayer(parent);
+                Player playerChild = Bukkit.getPlayer(child);
+
+                if(playerChild == null || playerParent == null){
+                    Bukkit.getServer().broadcastMessage(ChatColor.RED + "親もしくは子がnullのため、実行できません");
+                }else {
+                    if (pointChild < pointParent) {
+                        if (pointChild == -2) {
+                            database.AddMoney(playerParent, 3 * betMoney);
+                            database.AddMoney(playerChild, -1 * betMoney);
+                            Bukkit.getServer().broadcastMessage("子の2倍負け！");
+                        }
+                        switch (pointParent) {
+                            case 11:
+                                database.AddMoney(playerParent, 6 * betMoney);
+                                database.AddMoney(playerChild, -4 * betMoney);
+                                Bukkit.getServer().broadcastMessage("親の5倍勝ち！");
+
+                            case 10:
+                                database.AddMoney(playerParent, 4 * betMoney);
+                                database.AddMoney(playerChild, -2 * betMoney);
+                                Bukkit.getServer().broadcastMessage("親の3倍勝ち！");
+
+                            case 8:
+                            case 9:
+                                database.AddMoney(playerParent, 3 * betMoney);
+                                database.AddMoney(playerChild, -1 * betMoney);
+                                Bukkit.getServer().broadcastMessage("親の2倍勝ち！");
+
+                            default:
+                                database.AddMoney(playerParent, 2 * betMoney);
+                                Bukkit.getServer().broadcastMessage("親の1倍勝ち！");
+                        }
+                    }
+                    else if (pointChild > pointParent) {
+                        if (pointParent == -2) {
+                            database.AddMoney(playerParent, -1 * betMoney);
+                            database.AddMoney(playerChild, 3 * betMoney);
+                            Bukkit.getServer().broadcastMessage("親の2倍負け！");
+                        }
+                        switch (pointChild) {
+                            case 11:
+                                database.AddMoney(playerParent, -4 * betMoney);
+                                database.AddMoney(playerChild, 6 * betMoney);
+                                Bukkit.getServer().broadcastMessage("子の5倍勝ち！");
+
+                            case 10:
+                                database.AddMoney(playerParent, -2 * betMoney);
+                                database.AddMoney(playerChild, 4 * betMoney);
+                                Bukkit.getServer().broadcastMessage("子の3倍勝ち！");
+
+                            case 8:
+                            case 9:
+                                database.AddMoney(playerParent, -1 * betMoney);
+                                database.AddMoney(playerChild, 3 * betMoney);
+                                Bukkit.getServer().broadcastMessage("子の2倍勝ち！");
+
+                            default:
+                                database.AddMoney(playerChild, 2 * betMoney);
+                                Bukkit.getServer().broadcastMessage("子の1倍勝ち！");
+                        }
+                    }
+                    else {
+                        Bukkit.getServer().broadcastMessage("引き分け");
+                        database.AddMoney(playerParent, betMoney);
+                        database.AddMoney(playerChild, betMoney);
+                    }
+                    return true;
                 }
-                return true;
             }
         }
         return false;
@@ -196,7 +278,8 @@ public final class Minedice extends JavaPlugin {
         }
     }
 
-    public void CountDownTimer(String name){
+    public void CountDownTimer(Player player, int money){
+        String name = player.getDisplayName();
 
         timerTask = new BukkitRunnable(){
             int time = 80;
@@ -205,6 +288,9 @@ public final class Minedice extends JavaPlugin {
                 time -= 20;
                 if(time <= 0){
                     Bukkit.getServer().broadcastMessage(name+"のチンチロリンの募集は終了しました。");
+
+                    database.AddMoney(player, money);
+
                     parent = null;
                     this.cancel();
                 }
