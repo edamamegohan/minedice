@@ -25,9 +25,9 @@ public class Database {
             Bukkit.getLogger().warning("ーーーーーーーーーーーーー");
         }
         try{
-            this.statement.executeUpdate("create table moneydata(uuid text,name text, money integer)");
+            this.statement.executeUpdate("create table playerdata(uuid text,name text, money integer)");
             Bukkit.getLogger().info("ーーーーMineDiceーーーー");
-            Bukkit.getLogger().info("moneydataテーブルを作成しました");
+            Bukkit.getLogger().info("playerdataテーブルを作成しました");
             Bukkit.getLogger().info("ーーーーーーーーーーーーーーー");
             //this.connection.commit();
         }
@@ -43,12 +43,12 @@ public class Database {
            String uuid = player.getUniqueId().toString();
 
            this.statement = connection.createStatement();
-           ResultSet resultSet = statement.executeQuery("select money from moneydata where uuid = '" + uuid + "'");
+           ResultSet resultSet = statement.executeQuery("select money from playerdata where uuid = '" + uuid + "'");
 
             int money = resultSet.getInt("money");
             money = money + add_money;
 
-            this.statement.executeUpdate("update moneydata set money = " + money + " where uuid = '" + uuid + "'");
+            this.statement.executeUpdate("update playerdata set money = " + money + " where uuid = '" + uuid + "'");
 
             resultSet.close();
             statement.close();
@@ -65,7 +65,7 @@ public class Database {
             String uuid = player.getUniqueId().toString();
 
             this.statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("select money from moneydata where uuid = '" + uuid + "'");
+            ResultSet resultSet = statement.executeQuery("select money from playerdata where uuid = '" + uuid + "'");
 
             int money = resultSet.getInt("money");
 
