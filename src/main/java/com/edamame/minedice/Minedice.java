@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import sun.jvm.hotspot.opto.CallJavaNode;
 
 public final class Minedice extends JavaPlugin {
     Database database = new Database();
@@ -27,6 +28,7 @@ public final class Minedice extends JavaPlugin {
     private BukkitTask timerTask = null;
     String parent = null;
     String child = null;
+    boolean gameing = false;
 
     int betMoney = -1;
     int pointParent = 0;
@@ -35,6 +37,12 @@ public final class Minedice extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equalsIgnoreCase("mdice")) {
+            if(args[0].equalsIgnoreCase("test")){
+                Bukkit.getServer().broadcastMessage(ChatColor.MAGIC + "magic");
+                Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "gold");
+                Bukkit.getServer().broadcastMessage(ChatColor.ITALIC + "italic");
+                Bukkit.getServer().broadcastMessage("§c§l§n§oピ§b§l§n§oン§e§l§n§oゾ§a§l§n§oロ§d§l§n§o！！！");
+            }
 
             if (sender instanceof Player) { //このコマンドがプレイヤーから実行されているか確認
                 Player player_sender = (Player) sender;         //CommandSender型のsenderをPlayer型に変換
@@ -133,11 +141,38 @@ public final class Minedice extends JavaPlugin {
             String name = player_sender.getDisplayName();
 
             if(args[0].equalsIgnoreCase("alone")){
+                /*
                 int i = 0, point = 0;
                 do {
                     i++;
                     point = chinchiro(name);
-                }while (i < 3 || point == 0);
+                }while (i == 3 || point != 0);
+                return true;
+                 */
+
+                new BukkitRunnable(){
+                    int timer = 0;
+                    int i = 0;
+                    int point = 0;
+
+                    @Override
+                    public void run() {
+                        if(timer % 2 == 0){
+                            i++;
+                            Bukkit.getServer().broadcastMessage(ChatColor.GREEN +  "[MineDice] "+
+                                    ChatColor.YELLOW + ChatColor.BOLD + name +
+                                    ChatColor.WHITE + ChatColor.BOLD + "が" +
+                                    ChatColor.YELLOW + ChatColor.BOLD + i +
+                                    ChatColor.WHITE + ChatColor.BOLD + "回目のさいころを振っています...");
+                            }else{
+                                point = chinchiro(name);
+                                if(point != 0 || i == 3){
+                                    cancel();
+                                }
+                            }
+                        timer++;
+                    }
+                }.runTaskTimer(this, 0L , 20*3L);
                 return true;
             }
 
@@ -172,10 +207,9 @@ public final class Minedice extends JavaPlugin {
                     return true;
                 }
                  */
-
-                if(parent == null){
+                if(parent == null || gameing){
                     player_sender.sendMessage(ChatColor.RED + "[MineDice error] " +
-                            ChatColor.WHITE + ChatColor.BOLD + "現在開催中のゲームはありません");
+                            ChatColor.WHITE + ChatColor.BOLD + "現在募集中のゲームはありません");
                     return true;
                 }
 
@@ -189,6 +223,7 @@ public final class Minedice extends JavaPlugin {
                 }
 
                 database.AddMoney(player_sender, -1*betMoney);
+                gameing = true;
                 child = name;
                 new BukkitRunnable(){
                     int timer = 0;
@@ -200,7 +235,9 @@ public final class Minedice extends JavaPlugin {
                             if(timer % 2 == 0){
                                 i++;
                                 Bukkit.getServer().broadcastMessage(ChatColor.GREEN +  "[MineDice] "+
-                                        ChatColor.YELLOW + ChatColor.BOLD + parent +
+                                        ChatColor.AQUA + ChatColor.BOLD + "親" +
+                                        ChatColor.WHITE + ChatColor.BOLD + "の" +
+                                        ChatColor.AQUA + ChatColor.BOLD + parent +
                                         ChatColor.WHITE + ChatColor.BOLD + "が" +
                                         ChatColor.YELLOW + ChatColor.BOLD + i +
                                         ChatColor.WHITE + ChatColor.BOLD + "回目のさいころを振っています...");
@@ -217,7 +254,9 @@ public final class Minedice extends JavaPlugin {
                             if(timer % 2 == 0){
                                 i++;
                                 Bukkit.getServer().broadcastMessage(ChatColor.GREEN +  "[MineDice] "+
-                                        ChatColor.YELLOW + ChatColor.BOLD + child +
+                                        ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "子" +
+                                        ChatColor.WHITE + ChatColor.BOLD + "の" +
+                                        ChatColor.LIGHT_PURPLE + ChatColor.BOLD + child +
                                         ChatColor.WHITE + ChatColor.BOLD + "が" +
                                         ChatColor.YELLOW + ChatColor.BOLD + i +
                                         ChatColor.WHITE + ChatColor.BOLD + "回目のさいころを振っています...");
@@ -230,44 +269,47 @@ public final class Minedice extends JavaPlugin {
                         }
                         //対戦終了
                         else {
-                            Bukkit.getServer().broadcastMessage(ChatColor.AQUA + "finish");
-
                             Player playerParent = Bukkit.getPlayer(parent);
                             Player playerChild = Bukkit.getPlayer(child);
 
                             if(playerChild == null || playerParent == null){
-                                Bukkit.getServer().broadcastMessage(ChatColor.RED + "[MineDice error] 親もしくは子がnullのため、実行できません");
+                                Bukkit.getServer().broadcastMessage(ChatColor.DARK_RED + "[MineDice error] 親もしくは子がnullのため、実行できません");
                             }else {
                                 if (pointChild < pointParent) {
                                     if (pointChild == -2) {
                                         database.AddMoney(playerParent, 3 * betMoney);
                                         database.AddMoney(playerChild, -1 * betMoney);
-                                        Bukkit.getServer().broadcastMessage("子の2倍負け！");
+                                        Bukkit.getServer().broadcastMessage(ChatColor.DARK_GREEN + "[Minedice] " +
+                                                ChatColor.AQUA + ChatColor.BOLD + "子の2倍負け...");
                                         cancel();
                                     }else{
                                         switch (pointParent) {
                                             case 11:
                                                 database.AddMoney(playerParent, 6 * betMoney);
                                                 database.AddMoney(playerChild, -4 * betMoney);
-                                                Bukkit.getServer().broadcastMessage("親の5倍勝ち！");
+                                                Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[Minedice] " +
+                                                        ChatColor.AQUA + ChatColor.BOLD + "親の5倍勝ち！");
                                                 break;
 
                                             case 10:
                                                 database.AddMoney(playerParent, 4 * betMoney);
                                                 database.AddMoney(playerChild, -2 * betMoney);
-                                                Bukkit.getServer().broadcastMessage("親の3倍勝ち！");
+                                                Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[Minedice] " +
+                                                        ChatColor.AQUA + ChatColor.BOLD + "親の3倍勝ち！");
                                                 break;
 
                                             case 8:
                                             case 9:
                                                 database.AddMoney(playerParent, 3 * betMoney);
                                                 database.AddMoney(playerChild, -1 * betMoney);
-                                                Bukkit.getServer().broadcastMessage("親の2倍勝ち！");
+                                                Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[Minedice] " +
+                                                        ChatColor.AQUA + ChatColor.BOLD + "親の2倍勝ち！");
                                                 break;
 
                                             default:
                                                 database.AddMoney(playerParent, 2 * betMoney);
-                                                Bukkit.getServer().broadcastMessage("親の1倍勝ち！");
+                                                Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[Minedice] " +
+                                                        ChatColor.AQUA + ChatColor.BOLD + "親の1倍勝ち！");
                                                 break;
                                         }
                                     }
@@ -276,42 +318,49 @@ public final class Minedice extends JavaPlugin {
                                     if (pointParent == -2) {
                                         database.AddMoney(playerParent, -1 * betMoney);
                                         database.AddMoney(playerChild, 3 * betMoney);
-                                        Bukkit.getServer().broadcastMessage("親の2倍負け！");
+                                        Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[Minedice] " +
+                                                ChatColor.DARK_BLUE + ChatColor.BOLD + "親の2倍負け！");
                                         cancel();
                                     }else{
                                         switch (pointChild) {
                                             case 11:
                                                 database.AddMoney(playerParent, -4 * betMoney);
                                                 database.AddMoney(playerChild, 6 * betMoney);
-                                                Bukkit.getServer().broadcastMessage("子の5倍勝ち！");
+                                                Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[Minedice] " +
+                                                        ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "子の5倍勝ち！");
                                                 break;
 
                                             case 10:
                                                 database.AddMoney(playerParent, -2 * betMoney);
                                                 database.AddMoney(playerChild, 4 * betMoney);
-                                                Bukkit.getServer().broadcastMessage("子の3倍勝ち！");
+                                                Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[Minedice] " +
+                                                        ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "子の3倍勝ち！");
                                                 break;
 
                                             case 8:
                                             case 9:
                                                 database.AddMoney(playerParent, -1 * betMoney);
                                                 database.AddMoney(playerChild, 3 * betMoney);
-                                                Bukkit.getServer().broadcastMessage("子の2倍勝ち！");
+                                                Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[Minedice] " +
+                                                        ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "子の2倍勝ち！");
                                                 break;
 
                                             default:
                                                 database.AddMoney(playerChild, 2 * betMoney);
-                                                Bukkit.getServer().broadcastMessage("子の1倍勝ち！");
+                                                Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[Minedice] " +
+                                                        ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "子の1倍勝ち！");
                                                 break;
                                         }
                                     }
                                 }
                                 else {
-                                    Bukkit.getServer().broadcastMessage("引き分け");
+                                    Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[Minedice] " +
+                                            ChatColor.WHITE + ChatColor.BOLD + "引き分け");
                                     database.AddMoney(playerParent, betMoney);
                                     database.AddMoney(playerChild, betMoney);
                                 }
                                 parent = null;
+                                gameing = false;
                                 cancel();
                             }
                         }
@@ -330,15 +379,15 @@ public final class Minedice extends JavaPlugin {
         Bukkit.getServer().broadcastMessage(name + " は、" + dices[0] + " , " + dices[1] + " , " + dices[2] + " を出しました");
         if(Math.random() < 0.005){
             //ションベンの処理。if文の中で確率を変更
-            Bukkit.getServer().broadcastMessage("おっと！ションベン...！");
+            Bukkit.getServer().broadcastMessage(ChatColor.DARK_RED + "おっと！ションベン...！");
             return -1;
         }
         if(dices[0] == dices[1] && dices[1] == dices[2]) {   //ゾロ目の処理
             if(dices[0] == 1){
-                Bukkit.getServer().broadcastMessage("ピンゾロ！！！");
+                Bukkit.getServer().broadcastMessage("§c§l§n§oピ§b§l§n§oン§e§l§n§oゾ§a§l§n§oロ§d§l§n§o！！！"); //ピンゾロ
                 return 11;
             } else {
-                Bukkit.getServer().broadcastMessage("ゾロ目！！");
+                Bukkit.getServer().broadcastMessage("§e§l§oゾロ目！！");
                 return 10;
             }
         }
@@ -346,31 +395,31 @@ public final class Minedice extends JavaPlugin {
             int squared = dices[0]*dices[0] + dices[1]*dices[1] + dices[2]*dices[2];
             if(dices[0] + dices[1] + dices[2] == 14){
                 //0014(大石)の処理
-                Bukkit.getServer().broadcastMessage("大石！！");
+                Bukkit.getServer().broadcastMessage("§7§l§o大石！！");
                 return 9;
             } else if (squared == 14) {
                 //ヒフミの処理
-                Bukkit.getServer().broadcastMessage("ヒフミ...");
+                Bukkit.getServer().broadcastMessage("§5§o§lヒフミ...");
                 return -2;
             } else if (squared == 77) {
                 //シゴロの処理
-                Bukkit.getServer().broadcastMessage("シゴロ！！");
+                Bukkit.getServer().broadcastMessage("§a§lシゴロ！！");
                 return 8;
             } else {
                 //役なしの処理
-                Bukkit.getServer().broadcastMessage("役なし...");
+                Bukkit.getServer().broadcastMessage(ChatColor.BOLD + "役なし...");
                 return 0;
             }
         }
         else{   //目が2:1で出たとき
             if(dices[0] == dices[1]){
-                Bukkit.getServer().broadcastMessage(dices[2] + " の目！");
+                Bukkit.getServer().broadcastMessage("§e§l" +dices[2] + " §f§lの目！");
                 return dices[2];
             } else if (dices[1] == dices[2]) {
-                Bukkit.getServer().broadcastMessage(dices[0] + " の目！");
+                Bukkit.getServer().broadcastMessage("§e§l" +dices[0] + " §f§lの目！");
                 return dices[0];
             }else {
-                Bukkit.getServer().broadcastMessage(dices[1] + " の目！");
+                Bukkit.getServer().broadcastMessage("§e§l" +dices[1] + " §f§lの目！");
                 return dices[1];
             }
         }
@@ -385,7 +434,9 @@ public final class Minedice extends JavaPlugin {
             public void run() {
                 time -= 20;
                 if(time <= 0){
-                    Bukkit.getServer().broadcastMessage(name+"のチンチロリンの募集は終了しました。");
+                    Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[MineDice] " +
+                            ChatColor.YELLOW + ChatColor.BOLD + name +
+                            ChatColor.WHITE + ChatColor.BOLD + "のチンチロリンの募集は終了しました。");
 
                     database.AddMoney(player, money);
 
@@ -393,8 +444,15 @@ public final class Minedice extends JavaPlugin {
                     this.cancel();
                     return;
                 }
-                Bukkit.getServer().broadcastMessage(name+" が" + money + "円のチンチロリンを募集しています！/mcr joinで参加しよう！");
-                Bukkit.getServer().broadcastMessage("残り募集時間 "+time+" 秒");
+                Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[MineDice] " +
+                        ChatColor.YELLOW + ChatColor.BOLD + name +
+                        ChatColor.WHITE + ChatColor.BOLD + " が" +
+                        ChatColor.YELLOW + ChatColor.BOLD + money +
+                        ChatColor.WHITE + ChatColor.BOLD + "円のチンチロリンを募集しています！");
+                Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "[MineDice] " +
+                        ChatColor.YELLOW + ChatColor.BOLD + ChatColor.UNDERLINE + "/mcr join" +
+                        ChatColor.WHITE + ChatColor.BOLD + "で参加しよう！");
+                Bukkit.getServer().broadcastMessage("§l残り募集時間§e§l"+time+" §f§l秒");
             }
         }.runTaskTimer(this, 0, 20*20L);
     }

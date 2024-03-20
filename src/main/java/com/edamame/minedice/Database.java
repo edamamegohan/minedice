@@ -24,6 +24,18 @@ public class Database {
             Bukkit.getLogger().warning(e.toString());
             Bukkit.getLogger().warning("ーーーーーーーーーーーーー");
         }
+        try{
+            this.statement.executeUpdate("create table moneydata(uuid text,name text, money integer)");
+            Bukkit.getLogger().info("ーーーーMineDiceーーーー");
+            Bukkit.getLogger().info("moneydataテーブルを作成しました");
+            Bukkit.getLogger().info("ーーーーーーーーーーーーーーー");
+            //this.connection.commit();
+        }
+        catch(SQLException e){
+            Bukkit.getLogger().warning("ーーーーMinediceーーーー");
+            Bukkit.getLogger().warning(e.toString());
+            Bukkit.getLogger().warning("ーーーーーーーーーーーーーーー");
+        }
     }
 
     public void AddMoney(Player player, int add_money){
